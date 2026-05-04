@@ -3,8 +3,17 @@ from pydantic import BaseModel
 from services.content_analyzer import extract_key_points
 from services.question_generator import generate_questions
 from services.progress_tracker import save_progress, get_progress
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class StudyInput(BaseModel):
     content: str
