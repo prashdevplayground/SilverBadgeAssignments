@@ -25,3 +25,6 @@ uvicorn app:app --reload
 ### 3. Open frontend
 Open frontend/index.html in browser
 
+### 4. Swagger UI
+http://127.0.0.1:8000/docs 
+
