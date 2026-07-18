@@ -1,0 +1,16 @@
+# This Compose file makes it easy to run the service locally with a single command.
+# It maps the backend port and mounts the project directory so changes are reflected quickly.
+
+services:
+  api:
+    build: .
+    container_name: smart-buddy-study-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      APP_NAME: Smart Buddy Study
+      APP_VERSION: 0.1.0
+      DATA_DIR: /app/data
+      VECTOR_DB_DIR: /app/data/chroma

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Buddy Study</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 2rem; background: #f6f8fb; color: #1f2937; }
+        .card { background: white; max-width: 900px; margin: 0 auto; border-radius: 16px; padding: 2rem; box-shadow: 0 12px 30px rgba(0,0,0,0.08); }
+        h1 { color: #2563eb; }
+        textarea, input { width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 8px; margin-top: 0.5rem; }
+        button { background: #2563eb; color: white; border: none; padding: 0.8rem 1rem; border-radius: 8px; cursor: pointer; margin-top: 0.75rem; }
+        .result { margin-top: 1rem; padding: 1rem; border-radius: 8px; background: #eff6ff; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Smart Buddy Study</h1>
+        <p>Type study notes, ask a question, and let the RAG pipeline find the most relevant context.</p>
+
+        <label for="notes">Study notes</label>
+        <textarea id="notes" rows="6" placeholder="Paste your lecture notes or study material here..."></textarea>
+
+        <button onclick="ingestNotes()">Ingest Notes</button>
+
+        <label for="question" style="margin-top: 1rem; display: block;">Question</label>
+        <input id="question" placeholder="What would you like to learn?" />
+
+        <button onclick="askQuestion()">Ask</button>
+
+        <div id="output" class="result">The answer will appear here.</div>
+    </div>
+
+    <script>
+        async function ingestNotes() {
+            const notes = document.getElementById('notes').value;
+            const response = await fetch('/api/ingest', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: notes, source: 'web-ui' })
+            });
+            const data = await response.json();
+            document.getElementById('output').innerText = 'Stored chunks: ' + data.stored_chunks;
+        }
+
+        async function askQuestion() {
+            const question = document.getElementById('question').value;
+            const response = await fetch('/api/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question: question, top_k: 3 })
+            });
+            const data = await response.json();
+            document.getElementById('output').innerText = data.answer;
+        }
+    </script>
+</body>
+</html>
