@@ -13,9 +13,16 @@ def post_json(path, payload):
         with request.urlopen(req, timeout=5) as resp:
             return resp.status, json.load(resp)
     except error.HTTPError as e:
-        return e.code, e.read().decode()
+        try:
+            body = json.loads(e.read().decode())
+        except:
+            body = e.read().decode()
+        return e.code, body
+    except error.URLError as e:
+        print(f"Connection error: {e.reason}")
+        sys.exit(2)
     except Exception as e:
-        print("Request error:", e)
+        print(f"Request error: {e}")
         sys.exit(2)
 
 def get_json(path):
@@ -24,9 +31,16 @@ def get_json(path):
         with request.urlopen(req, timeout=5) as resp:
             return resp.status, json.load(resp)
     except error.HTTPError as e:
-        return e.code, e.read().decode()
+        try:
+            body = json.loads(e.read().decode())
+        except:
+            body = e.read().decode()
+        return e.code, body
+    except error.URLError as e:
+        print(f"Connection error: {e.reason}")
+        sys.exit(2)
     except Exception as e:
-        print("Request error:", e)
+        print(f"Request error: {e}")
         sys.exit(2)
 
 def main():
@@ -40,7 +54,7 @@ def main():
     print("Testing /progress POST...")
     payload = {"user_id":"testuser","topic":"testing","score":42}
     status, body = post_json("/progress", payload)
-    if status != 200 or body.get("status") != "saved":
+    if status != 200 or not isinstance(body, dict) or body.get("status") != "saved":
         print("/progress POST failed:", status, body)
         sys.exit(1)
     print("/progress POST OK")
