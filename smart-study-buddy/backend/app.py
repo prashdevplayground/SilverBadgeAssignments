@@ -1,8 +1,15 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from services.content_analyzer import extract_key_points
-from services.question_generator import generate_questions
-from services.progress_tracker import save_progress, get_progress
+# Prefer package-relative imports when running as a module;
+# fall back to top-level imports when running directly.
+try:
+    from .services.content_analyzer import extract_key_points
+    from .services.question_generator import generate_questions
+    from .services.progress_tracker import save_progress, get_progress
+except Exception:
+    from services.content_analyzer import extract_key_points
+    from services.question_generator import generate_questions
+    from services.progress_tracker import save_progress, get_progress
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
